@@ -101,4 +101,4 @@ docker compose -f docker-compose.yml -f compose.https.yml up -d --build
 
 공개 도메인의 마이크 사용에는 HTTPS가 필요합니다. 기존 프록시가 사용 중인 포트와 충돌하지 않도록 VPS 상태 확인 후 실행해야 합니다. Docker 이미지는 코드와 작품 자산만 포함하며 `.env`, Git 이력, 검증 스크린샷은 포함하지 않습니다.
 
-현재 상태: 로컬 배포 파일 준비 완료. VPS 접속 정보와 도메인이 아직 제공되지 않아 실제 Hostinger 배포/인증서 발급/외부 접속은 미확인입니다.
+현재 배포 주소: https://srv1934103.hstgr.cloud/forest/ . VPS의 기존 Caddy HTTPS 프록시에 `/forest/` 경로를 추가했습니다. 작품과 이미지 외부 응답 및 컨테이너 healthy 확인 완료. 음성은 서버 API 키 설정 전까지 비활성입니다.

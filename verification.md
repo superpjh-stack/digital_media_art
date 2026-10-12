@@ -125,3 +125,14 @@
 - Node 자동 검사 30개, Docker 이미지 빌드, Compose 구문, 읽기 전용/non-root 컨테이너 HTTP 검사 통과.
 - 컨테이너 검사에서 Node fetch의 Host 헤더 재정의가 적용되지 않아 http.get 기반 검사로 수정 후 허용/차단을 확인했습니다. 제품 코드 결함은 아니었습니다.
 - VPS 1934103의 SSH 접속 정보와 도메인 대기 중. 실제 배포, 인증서 발급 및 외부 음성 연결은 미확인입니다.
+
+## Hostinger 실제 배포 완료
+
+- 주소: https://srv1934103.hstgr.cloud/forest/
+- VPS: srv1934103, 프로젝트: /docker/digital-media-art, Compose 프로젝트: digital-media-art.
+- 배포 코드: 23b03b0. 별도 compose.hostinger.yml로 기존 rodem-mes_mesnet 네트워크에 digital-media-art 별칭을 연결했습니다.
+- 기존 /docker/rodem-mes/Caddyfile을 백업(Caddyfile.pre-forest-1791816656) 후 /forest/ 경로만 추가, 설정 검증 및 무중단 reload 완료. 기존 루트는 배포 전후 동일하게 401 응답.
+- 외부 HTTPS: 작품/배경 PNG/음성 JS/API 설정 200, .env 접근 404. 컨테이너 running healthy, 확인 시 메모리 약 31MiB/256MiB.
+- API 경로를 상대 주소로 변경해 /forest/ 하위 배포를 지원합니다. 자동 검사 30개 통과.
+- VPS .env에는 PUBLIC_ORIGIN만 설정했습니다. 음성 API 키는 미설정이며 실제 AI 음성 왕복은 미검증입니다.
+- 갱신: VPS 프로젝트 폴더에서 git pull --ff-only 후 docker compose -p digital-media-art -f docker-compose.yml -f compose.hostinger.yml up -d --build.
