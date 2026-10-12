@@ -1,0 +1,12 @@
+*
+!Dockerfile
+!server.mjs
+!index.html
+!styles.css
+!script.js
+!night.js
+!voice-session.js
+!voice.js
+!music.js
+!assets/
+!assets/**

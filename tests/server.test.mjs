@@ -53,3 +53,13 @@ test('concurrent call setup limit is enforced and released',async()=>{
  const first=request(app,'/api/session',{method:'POST',body:{animal:'deer',sdp}});await new Promise(r=>setImmediate(r));
  assert.equal((await request(app,'/api/session',{method:'POST',body:{animal:'deer',sdp}})).statusCode,429);release();assert.equal((await first).statusCode,200);
 });
+
+test('deployment permits only configured HTTPS host and same-origin sessions',async()=>{
+ const app=createHandler({publicOrigin:'https://forest.example',apiKey:'test',fetchImpl:async()=>new Response(sdp,{status:201})});
+ assert.equal((await request(app,'/',{host:'forest.example'})).statusCode,200);
+ assert.equal((await request(app,'/',{host:'other.example'})).statusCode,403);
+ for(const origin of ['http://forest.example','https://other.example']) assert.equal((await request(app,'/api/session',{host:'forest.example',origin,method:'POST',body:{animal:'deer',sdp}})).statusCode,403);
+ assert.equal((await request(app,'/api/session',{host:'forest.example',origin:'https://forest.example',method:'POST',body:{animal:'deer',sdp}})).statusCode,200);
+ assert.equal((await request(app,'/api/config')).statusCode,200);
+ for(const publicOrigin of ['http://forest.example','https://forest.example/path','https://user:pass@forest.example']) assert.throws(()=>createHandler({publicOrigin}));
+});

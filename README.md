@@ -81,3 +81,24 @@ node tools/audio-browser-check.cjs
 브라우저 검사는 macOS Google Chrome과 실행 중인 Node 서버(8766)를 사용합니다. 음성 전송은 모의 연결이며 실제 API 성공 증거와 구분합니다. 최신 검사 결과는 `evidence/audio-unit-tests.txt`, `evidence/audio-browser-checks.json`에 있습니다.
 
 GitHub: https://github.com/superpjh-stack/digital_media_art
+
+## Hostinger VPS Docker 배포
+
+`docker-compose.yml`은 앱을 VPS의 `127.0.0.1:8766`에 연결합니다. 기존 HTTPS 프록시에서 해당 포트로 연결하고 원래 Host 헤더를 유지하세요. 컨테이너 프록시를 사용한다면 같은 Docker 네트워크에서 `forest:8766`으로 연결하세요.
+
+VPS 프로젝트 폴더에 `.env.example`을 `.env`로 복사하고 `PUBLIC_ORIGIN=https://실제도메인`을 설정합니다. 음성을 사용할 경우 새 `OPENAI_API_KEY`를 VPS에서 직접 설정하세요. 키 없이도 화면과 음악은 동작합니다.
+
+```sh
+docker compose up -d --build
+docker compose ps
+```
+
+기존 HTTPS 프록시가 없고 포트 80/443이 비어 있다면, 도메인의 DNS를 VPS로 연결한 뒤 아래 구성을 사용할 수 있습니다. Caddy가 인증서를 발급하며 `/data` 볼륨에 보관합니다.
+
+```sh
+docker compose -f docker-compose.yml -f compose.https.yml up -d --build
+```
+
+공개 도메인의 마이크 사용에는 HTTPS가 필요합니다. 기존 프록시가 사용 중인 포트와 충돌하지 않도록 VPS 상태 확인 후 실행해야 합니다. Docker 이미지는 코드와 작품 자산만 포함하며 `.env`, Git 이력, 검증 스크린샷은 포함하지 않습니다.
+
+현재 상태: 로컬 배포 파일 준비 완료. VPS 접속 정보와 도메인이 아직 제공되지 않아 실제 Hostinger 배포/인증서 발급/외부 접속은 미확인입니다.

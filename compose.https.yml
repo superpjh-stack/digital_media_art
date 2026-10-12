@@ -1,0 +1,18 @@
+# Optional: use only when VPS ports 80 and 443 are available.
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    command: [caddy, reverse-proxy, --from, "${PUBLIC_ORIGIN:?Set PUBLIC_ORIGIN}", --to, "forest:8766"]
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      forest:
+        condition: service_healthy
+volumes:
+  caddy_data:
+  caddy_config:

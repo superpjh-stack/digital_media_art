@@ -25,15 +25,23 @@ async function bodyJSON(req) {
   }
   try { return JSON.parse(text); } catch { throw Object.assign(new Error('올바른 JSON 요청이 필요합니다.'),{status:400}); }
 }
-export function createHandler({apiKey='',model='gpt-realtime-2.1',fetchImpl=fetch,timeoutMs=20000,maxPending=2,rootDir=PROJECT}={}) {
+export function createHandler({apiKey='',model='gpt-realtime-2.1',fetchImpl=fetch,timeoutMs=20000,maxPending=2,rootDir=PROJECT,publicOrigin=''}={}) {
+  let deploymentOrigin='';
+  if(publicOrigin) {
+    const configured=new URL(publicOrigin);
+    if(configured.protocol!=='https:' || configured.username || configured.password || configured.pathname!=='/' || configured.search || configured.hash) throw new Error('PUBLIC_ORIGIN must be an HTTPS origin without a path');
+    deploymentOrigin=configured.origin;
+  }
   let pending=0;
   let recent=[];
   return async (req,res) => {
     res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');
     res.setHeader('Referrer-Policy','no-referrer');res.setHeader('Permissions-Policy','microphone=(self)');
     const host=req.headers.host||'';
-    if(!/^(127\.0\.0\.1|localhost)(:\d{1,5})?$/.test(host)) return reply(res,403,{error:'로컬 주소로 접속해 주세요.'});
-    const origin=`http://${host}`;
+    const local=/^(127\.0\.0\.1|localhost)(:\d{1,5})?$/.test(host);
+    const deployed=deploymentOrigin && host===new URL(deploymentOrigin).host;
+    if(!local && !deployed) return reply(res,403,{error:'설정된 작품 주소로 접속해 주세요.'});
+    const origin=deployed?deploymentOrigin:`http://${host}`;
     let url;
     try { url=new URL(req.url,origin); } catch { return reply(res,400,{error:'잘못된 주소입니다.'}); }
     if(url.pathname==='/api/config' && req.method==='GET') return reply(res,200,{voiceAvailable:Boolean(apiKey)});
@@ -94,8 +102,8 @@ if(process.argv[1] && import.meta.url===pathToFileURL(path.resolve(process.argv[
   const port=Number(process.env.PORT||8766);
   if(!Number.isInteger(port)||port<1||port>65535) throw new Error('PORT must be 1–65535');
   const apiKey=process.env.OPENAI_API_KEY?.trim()||'';
-  const server=http.createServer(createHandler({apiKey,model:process.env.OPENAI_REALTIME_MODEL||'gpt-realtime-2.1'}));
+  const server=http.createServer(createHandler({apiKey,model:process.env.OPENAI_REALTIME_MODEL||'gpt-realtime-2.1',publicOrigin:process.env.PUBLIC_ORIGIN||''}));
   server.requestTimeout=30000;server.headersTimeout=10000;
   server.on('error',error=>{console.error(error.code==='EADDRINUSE'?'포트를 사용 중입니다. PORT를 바꿔 실행해 주세요.':`서버 실행 실패: ${error.code}`);process.exitCode=1;});
-  server.listen(port,'127.0.0.1',()=>console.log(`작품: http://127.0.0.1:${port}\n음성 API 키: ${apiKey?'설정됨':'미설정 — 음악과 작품 감상은 사용 가능'}`));
+  server.listen(port,process.env.HOST||'127.0.0.1',()=>console.log(`작품: http://127.0.0.1:${port}\n음성 API 키: ${apiKey?'설정됨':'미설정 — 음악과 작품 감상은 사용 가능'}`));
 }
