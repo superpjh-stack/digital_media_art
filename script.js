@@ -29,7 +29,7 @@
     button.dataset.state = 'idle';
     button.style.cssText = `left:${x}%;top:${y}%;--delay:${-index * 1.3}s`;
     button.setAttribute('aria-label', `꽃에 빛 만들기 ${index + 1}`);
-    button.innerHTML = `<img class="blades" src="assets/ember-flowers.png" alt="" draggable="false">`;
+    button.innerHTML = `<img class="blades" src="assets/ember-flowers.png" alt="" draggable="false"><span class="bloom-petals" aria-hidden="true">${Array.from({length:8},(_,i)=>`<i style="--petal:${i}"></i>`).join('')}</span>`;
     grassHost.append(button);
   });
   const targets = [...document.querySelectorAll('[data-kind]')];

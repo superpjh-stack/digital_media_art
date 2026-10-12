@@ -1,0 +1,42 @@
+const {spawn}=require('child_process');const fs=require('fs');
+const child=spawn('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',['--headless','--disable-gpu','--no-first-run','--user-data-dir=/tmp/forest-ecosystem-review','--remote-debugging-pipe'],{stdio:['ignore','ignore','ignore','pipe','pipe']});
+let id=0,buffer='',session;const pending=new Map();const errors=[];child.stdio[4].on('data',chunk=>{buffer+=chunk;let i;while((i=buffer.indexOf('\0'))>=0){const msg=JSON.parse(buffer.slice(0,i));buffer=buffer.slice(i+1);if(msg.method==='Runtime.exceptionThrown')errors.push(msg.params.exceptionDetails);if(pending.has(msg.id)){pending.get(msg.id)(msg);pending.delete(msg.id);}}});
+const send=(method,params={},sid=session)=>new Promise((resolve,reject)=>{const n=++id;pending.set(n,m=>m.error?reject(Error(JSON.stringify(m.error))):resolve(m.result));child.stdio[3].write(JSON.stringify({id:n,method,params,...(sid?{sessionId:sid}:{})})+'\0');});
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));const results=[];
+const evaluate=async expression=>{const r=await send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true,userGesture:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
+const check=async(name,expr)=>{const result=await evaluate(expr);results.push({name,result});if(!result)throw Error(name);};
+const click=async selector=>{const p=await evaluate(`(()=>{const r=document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()`);await send('Input.dispatchMouseEvent',{type:'mousePressed',...p,button:'left',clickCount:1});await send('Input.dispatchMouseEvent',{type:'mouseReleased',...p,button:'left',clickCount:1});};
+const screenshot=async name=>{const shot=await send('Page.captureScreenshot');fs.writeFileSync('evidence/'+name+'.png',Buffer.from(shot.data,'base64'));};
+(async()=>{
+ const {targetId}=await send('Target.createTarget',{url:'about:blank'});session=(await send('Target.attachToTarget',{targetId,flatten:true})).sessionId;
+ await send('Page.enable');await send('Runtime.enable');await send('Network.enable');await send('Network.setCacheDisabled',{cacheDisabled:true});await send('Emulation.setFocusEmulationEnabled',{enabled:true});
+ await send('Emulation.setDeviceMetricsOverride',{width:1440,height:900,deviceScaleFactor:1,mobile:false});
+ await send('Page.addScriptToEvaluateOnNewDocument',{source:`window.rings=0;window.wings=0;for(const [name,key]of [['ellipse','rings'],['bezierCurveTo','wings']]){const original=CanvasRenderingContext2D.prototype[name];CanvasRenderingContext2D.prototype[name]=function(...a){window[key]++;return original.apply(this,a);};}`});
+ await send('Page.navigate',{url:process.env.FOREST_TEST_URL||'http://127.0.0.1:8767/'});await sleep(1000);await evaluate(`Promise.all([...document.images].map(i=>i.decode()))`);
+ await check('drinking asset has real alpha',`(async()=>{const i=new Image();i.src='assets/moon-deer-drinking.png';await i.decode();const c=document.createElement('canvas');c.width=i.width;c.height=i.height;const x=c.getContext('2d');x.drawImage(i,0,0);return x.getImageData(0,0,1,1).data[3]===0})()`);
+ await click('.deer');await click('.grass:nth-child(2)');await sleep(3000);
+ await check('flower blossoms and butterfly wings render',`document.querySelector('.grass:nth-child(2)').classList.contains('is-blooming')&&window.wings>0`);await screenshot('ecosystem-butterflies');
+ for(let n=0;n<90;n++){if(await evaluate(`document.querySelector('.deer').dataset.activity==='drinking'`))break;await sleep(150);}
+ await check('deer reaches drinking pose',`document.querySelector('.deer').dataset.activity==='drinking'`);
+ await evaluate('window.rings=0');await sleep(300);await check('drinking produces water rings without pointer input','window.rings>0');await screenshot('ecosystem-deer-drinking');
+ await click('#music-toggle');await sleep(600);
+ await check('nature audio starts with music',`forestMusic.playing&&forestMusic.ambience&&forestMusic.ambience.nodes.size>=2`);
+ await send('Input.dispatchMouseEvent',{type:'mouseMoved',x:670,y:740});await sleep(650);
+ await evaluate('window.pondMix={...forestMusic.ambience.mix}');
+ await send('Input.dispatchMouseEvent',{type:'mouseMoved',x:1050,y:280});await sleep(650);
+ await check('pointer changes water and bird proximity',`forestMusic.ambience.mix.water<pondMix.water&&forestMusic.ambience.mix.birds>pondMix.birds`);
+ await check('nature sound emits unclipped signal',`(async()=>{const c=forestMusic.context,a=c.createAnalyser();a.fftSize=2048;forestMusic.ambience.water.gain.connect(a);await new Promise(r=>setTimeout(r,200));const d=new Float32Array(a.fftSize);a.getFloatTimeDomainData(d);forestMusic.ambience.water.gain.disconnect(a);a.disconnect();return d.some(v=>Math.abs(v)>.00001)&&d.every(v=>Math.abs(v)<1)})()`);
+ await check('voice ducking also reduces natural sound',`(()=>{forestMusic.setDucked(true);const good=forestMusic.effectiveVolume===forestMusic.volume*.2;forestMusic.setDucked(false);return good})()`);
+ await evaluate('window.oldNature=forestMusic.ambience;window.oldAudio=forestMusic.context');await click('#music-toggle');
+ await check('music stop releases all natural sound sources',`!forestMusic.playing&&oldNature.disposed&&oldNature.nodes.size===0&&oldAudio.state==='closed'`);
+ await click('#music-toggle');await sleep(200);await evaluate('window.hiddenNature=forestMusic.ambience');
+ await evaluate(`Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'))`);
+ await check('hidden tab releases nature sound and clears flowers',`hiddenNature.disposed&&!forestMusic.playing&&!document.querySelector('.is-blooming')`);
+ await evaluate(`delete document.hidden;document.dispatchEvent(new Event('visibilitychange'))`);
+ await click('#motion-toggle');await sleep(100);await evaluate('window.rings=0;window.wings=0');await click('.grass:nth-child(2)');await sleep(300);
+ await check('reduced motion clears butterflies and drinking',`window.rings===0&&window.wings===0&&!document.querySelector('.is-blooming')&&document.querySelector('.deer').dataset.activity==='resting'`);
+ await click('#motion-toggle');await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:false});await sleep(300);await click('.deer');
+ for(let n=0;n<100;n++){if(await evaluate(`document.querySelector('.deer').dataset.activity==='drinking'`))break;await sleep(150);}
+ await check('mobile deer can drink and remains in frame',`(()=>{const d=document.querySelector('.deer'),r=d.getBoundingClientRect();return d.dataset.activity==='drinking'&&r.left>=0&&r.right<=innerWidth&&r.bottom<=innerHeight})()`);await screenshot('ecosystem-mobile-drinking');
+ if(errors.length)throw Error(JSON.stringify(errors));results.push({name:'runtime errors',result:errors});fs.writeFileSync('evidence/ecosystem-browser-checks.json',JSON.stringify(results,null,2));console.log(JSON.stringify(results));
+})().catch(e=>{console.error(e);process.exitCode=1}).finally(()=>child.kill());

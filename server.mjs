@@ -5,8 +5,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 
 const PROJECT = path.dirname(fileURLToPath(import.meta.url));
-const PUBLIC = new Set(['index.html','styles.css','script.js','night.js','voice-session.js','voice.js','music.js',
-  'assets/night-forest.png','assets/moon-deer.png','assets/moon-rabbit.png','assets/ember-flowers.png','assets/forest.svg']);
+const PUBLIC = new Set(['index.html','styles.css','script.js','night.js','voice-session.js','voice.js','music.js','nature-sound.js',
+  'assets/night-forest.png','assets/moon-deer.png','assets/moon-deer-drinking.png','assets/moon-rabbit.png','assets/ember-flowers.png','assets/forest.svg']);
 const MIME = { '.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.png':'image/png','.svg':'image/svg+xml' };
 const ANIMALS = {
   deer: { voice:'cedar', persona:'당신은 달빛 숲에 사는 사슴입니다. 차분하고 다정한 숲 안내자처럼 느긋하게 말하세요.' },

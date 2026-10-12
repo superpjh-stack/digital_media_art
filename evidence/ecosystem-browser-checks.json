@@ -1,0 +1,54 @@
+[
+  {
+    "name": "drinking asset has real alpha",
+    "result": true
+  },
+  {
+    "name": "flower blossoms and butterfly wings render",
+    "result": true
+  },
+  {
+    "name": "deer reaches drinking pose",
+    "result": true
+  },
+  {
+    "name": "drinking produces water rings without pointer input",
+    "result": true
+  },
+  {
+    "name": "nature audio starts with music",
+    "result": true
+  },
+  {
+    "name": "pointer changes water and bird proximity",
+    "result": true
+  },
+  {
+    "name": "nature sound emits unclipped signal",
+    "result": true
+  },
+  {
+    "name": "voice ducking also reduces natural sound",
+    "result": true
+  },
+  {
+    "name": "music stop releases all natural sound sources",
+    "result": true
+  },
+  {
+    "name": "hidden tab releases nature sound and clears flowers",
+    "result": true
+  },
+  {
+    "name": "reduced motion clears butterflies and drinking",
+    "result": true
+  },
+  {
+    "name": "mobile deer can drink and remains in frame",
+    "result": true
+  },
+  {
+    "name": "runtime errors",
+    "result": []
+  }
+]

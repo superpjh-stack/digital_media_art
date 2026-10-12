@@ -11,7 +11,7 @@ const screenshot=async name=>{const shot=await send('Page.captureScreenshot');fs
  results.push(await send('Browser.getVersion'));
  const {targetId}=await send('Target.createTarget',{url:'about:blank'});session=(await send('Target.attachToTarget',{targetId,flatten:true})).sessionId;
  await send('Page.enable');await send('Runtime.enable');await send('Network.enable');await send('Network.setCacheDisabled',{cacheDisabled:true});await send('Emulation.setFocusEmulationEnabled',{enabled:true});
- await send('Page.navigate',{url:'http://127.0.0.1:8766'});await sleep(700);await evaluate(`Promise.all([...document.images].map(i=>i.decode()))`);
+ await send('Page.navigate',{url:process.env.FOREST_TEST_URL||'http://127.0.0.1:8766'});await sleep(700);await evaluate(`Promise.all([...document.images].map(i=>i.decode()))`);
  for(const [width,height]of [[1280,720],[1366,768],[1440,900],[1920,1080],[390,844]]){
   await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});await sleep(120);
   await check('sound controls bounds '+width,`[...document.querySelectorAll('.sound-controls button,.controls button,#music-volume,.artist-credit')].every(e=>{const r=e.getBoundingClientRect();return r.x>=0&&r.y>=0&&r.right<=innerWidth&&r.bottom<=innerHeight})`);

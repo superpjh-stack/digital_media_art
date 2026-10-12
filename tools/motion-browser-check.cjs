@@ -19,6 +19,7 @@ const screenshot=async name=>{const shot=await send('Page.captureScreenshot');fs
  await check('animals rest at their new positions',`[...document.querySelectorAll('.creature')].every(e=>e.dataset.walking==='false'&&parseFloat(e.style.transform.slice(10))>0)`);
  await click('.deer');await sleep(3200);
  await check('next two steps return deer without drifting',`Math.abs(new DOMMatrix(getComputedStyle(document.querySelector('.deer')).transform).m41)<.1`);
+ await click('#motion-toggle');await sleep(80);await click('#motion-toggle');
  await evaluate('window.rings=0');await send('Input.dispatchMouseEvent',{type:'mouseMoved',x:500,y:720});await sleep(300);
  await check('hover water generates rings without click','window.rings>0');await screenshot('motion-water-hover');
  await send('Input.dispatchMouseEvent',{type:'mouseMoved',x:500,y:200});await sleep(2600);await evaluate('window.rings=0');await sleep(200);

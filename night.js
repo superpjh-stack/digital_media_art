@@ -17,6 +17,50 @@
     }
   });
   const ripples = [];
+  const drinkingImage = new Image();
+  drinkingImage.src = 'assets/moon-deer-drinking.png';
+  const butterflies = [], blooms = new Map();
+  const ease = value => { const t = Math.max(0, Math.min(1, value)); return t * t * (3 - 2 * t); };
+  function addWaterRipple(x, y) {
+    if (ripples.length >= 16) ripples.shift();
+    ripples.push({ x, y, start: clock, water: true });
+  }
+  function bloomFlower(target) {
+    if (!target || reduced() || document.hidden || blooms.has(target)) return;
+    const r = target.getBoundingClientRect(), b = stage.getBoundingClientRect();
+    const destination = { x: r.left - b.left + r.width * .51, y: r.top - b.top + r.height * .4 };
+    blooms.set(target, clock); target.classList.add('is-blooming');
+    for (let i = 0; i < 2; i++) {
+      if (butterflies.length >= 10) butterflies.shift();
+      butterflies.push({ target: destination, start: clock + .5 + i * .5, side: i ? 1 : -1, phase: clock + i * 2.4 });
+    }
+  }
+  function drawButterflies(time) {
+    for (const [flower, start] of blooms) {
+      if (time - start > 11) { flower.classList.remove('is-blooming'); blooms.delete(flower); }
+    }
+    ctx.globalCompositeOperation = 'source-over';
+    for (let i = butterflies.length - 1; i >= 0; i--) {
+      const b = butterflies[i], age = time - b.start;
+      if (age < 0) continue;
+      if (age > 10) { butterflies.splice(i, 1); continue; }
+      const arrive = ease(age / 3), leave = ease((age - 7) / 3), perched = age >= 3 && age < 7;
+      const x = b.target.x + b.side * (1 - arrive) * Math.min(width * .25, 200) + b.side * leave * 100 + (perched ? 0 : Math.sin(age * 3 + b.phase) * 12);
+      const y = b.target.y - (1 - arrive) * 85 - leave * 130 + (perched ? -3 : Math.cos(age * 2.7) * 9);
+      const flap = .2 + .8 * Math.abs(Math.sin(time * (perched ? 3 : 17) + b.phase));
+      ctx.save();ctx.translate(x, y);ctx.rotate(Math.sin(age * 2) * (perched ? .06 : .22));
+      ctx.globalAlpha = Math.min(1, age * 2) * (1 - leave);
+      for (const side of [-1, 1]) {
+        ctx.save();ctx.scale(side * flap, 1);
+        const wing = ctx.createLinearGradient(0, 0, 12, -7);
+        wing.addColorStop(0, '#284655');wing.addColorStop(.45, b.side > 0 ? '#eeb85e' : '#85d3e1');wing.addColorStop(1, '#334766');
+        ctx.fillStyle = wing;ctx.strokeStyle = '#e4d8a877';ctx.lineWidth = .6;
+        ctx.beginPath();ctx.moveTo(0, 0);ctx.bezierCurveTo(7, -15, 17, -12, 12, -2);ctx.bezierCurveTo(16, 8, 7, 12, 0, 2);ctx.closePath();ctx.fill();ctx.stroke();
+        ctx.fillStyle = '#f8eec9';ctx.beginPath();ctx.arc(9, -5, 1.2, 0, Math.PI * 2);ctx.fill();ctx.restore();
+      }
+      ctx.strokeStyle = '#b6bda3';ctx.lineWidth = 1.5;ctx.beginPath();ctx.moveTo(0, -5);ctx.lineTo(0, 6);ctx.stroke();ctx.restore();
+    }
+  }
   const motes = Array.from({ length: 58 }, (_, i) => ({
     x: ((i * 73 + 19) % 101) / 101, y: .14 + ((i * 31) % 79) / 100,
     phase: i * 2.399, speed: .18 + (i % 5) * .035, radius: .7 + (i % 4) * .35,
@@ -31,7 +75,7 @@
   const animals = [...document.querySelectorAll('.creature')].map(button => {
     const image = button.querySelector('.animal');
     const surface = button.querySelector('.animal-motion');
-    return { button, image, surface, context: surface.getContext('2d'), start: null, lastState: 'idle', w: 0, h: 0, walk: null, offset: 0, nextWalk: button.dataset.kind === 'deer' ? 2 : 5 };
+    return { button, image, surface, context: surface.getContext('2d'), start: null, lastState: 'idle', w: 0, h: 0, walk: null, offset: 0, drink: null, drinkRequested: false, nextDrink: 12, nextSip: 0, pad: 0, nextWalk: button.dataset.kind === 'deer' ? 2 : 5 };
   });
   function reduced() { return root.dataset.reduced === 'true'; }
   function fit() {
@@ -41,9 +85,10 @@
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
     for (const animal of animals) {
       const b = animal.button.getBoundingClientRect();
-      animal.w = b.width; animal.h = b.height;
-      animal.surface.width = Math.round(b.width * ratio); animal.surface.height = Math.round(b.height * ratio);
-      animal.context?.setTransform(ratio, 0, 0, ratio, 0, 0);
+      animal.w = b.width; animal.h = b.height; animal.baseTop = animal.button.offsetTop; animal.baseLeft = animal.button.offsetLeft;
+      animal.pad = animal.button.dataset.kind === 'deer' ? b.width * .35 : 0;
+      animal.surface.width = Math.round((b.width + animal.pad * 2) * ratio); animal.surface.height = Math.round(b.height * ratio);
+      animal.context?.setTransform(ratio, 0, 0, ratio, animal.pad * ratio, 0);
     }
     ripples.length = 0;
     drawAnimals(clock, true);
@@ -54,12 +99,12 @@
       const c = a.context, image = a.image;
       const state = a.button.dataset.state;
       const triggered = state === 'reacting' && a.lastState !== state;
-      if (triggered) a.start = time;
+      if (triggered) { a.start = time; if (a.button.dataset.kind === 'deer') a.drinkRequested = true; }
       a.lastState = state;
       const kind = a.button.dataset.kind;
       if (still) {
-        a.walk = null; a.offset = 0; a.nextWalk = time + (kind === 'deer' ? 3 : 6);
-      } else if (!a.walk && (triggered || (time >= a.nextWalk && a.button.dataset.speaking !== 'true'))) {
+        a.walk = null; a.drink = null; a.drinkRequested = false; a.nextDrink = time + 12; a.offset = 0; a.nextWalk = time + (kind === 'deer' ? 3 : 6);
+      } else if (!a.walk && !a.drink && (triggered || (time >= a.nextWalk && a.button.dataset.speaking !== 'true'))) {
         // Two short steps, then rest at the new position. Alternate the next excursion.
         a.walk = { start: time, from: a.offset, to: a.offset > 0 ? 0 : Math.min(a.w * .18, 48), duration: kind === 'deer' ? 2.8 : 1.8 };
       }
@@ -73,7 +118,6 @@
         lift = Math.pow(Math.sin(phase * Math.PI), 2) * (kind === 'rabbit' ? 9 : 2.5);
         if (p === 1) { a.offset = a.walk.to; a.walk = null; a.nextWalk = time + (kind === 'deer' ? 12 : 9); }
       }
-      a.button.style.transform = `translate(${a.offset.toFixed(2)}px, ${(-lift).toFixed(2)}px)`;
       a.button.dataset.walking = String(Boolean(a.walk));
       const raw = getComputedStyle(root).getPropertyValue(`--${kind}-duration`).trim();
       const seconds = parseFloat(raw) / (raw.endsWith('ms') ? 1000 : 1);
@@ -82,7 +126,35 @@
       const scale = Math.min(a.w / image.naturalWidth, a.h / image.naturalHeight) * .96;
       const dw = image.naturalWidth * scale, dh = image.naturalHeight * scale;
       const ox = (a.w - dw) / 2, oy = (a.h - dh) / 2;
-      c.clearRect(0, 0, a.w, a.h);
+      let dip = 0, approach = 0;
+      const foot = oy + dh * .935;
+      const drinkWidth = dw * 1.5, drinkHeight = drinkWidth / 1.5;
+      const drinkX = ox - dw * .45, drinkY = foot - drinkHeight * .925;
+      if (!still && kind === 'deer' && drinkingImage.complete && drinkingImage.naturalWidth && !a.walk && !a.drink && a.button.dataset.speaking !== 'true' && (a.drinkRequested || time >= a.nextDrink)) {
+        a.drink = { start: time, distance: Math.max(0, Math.min(height * .14, height * .8 - a.baseTop - foot)) };
+        a.drinkRequested = false; a.nextSip = time + 3.8;
+      }
+      let activity = 'resting';
+      if (a.drink) {
+        const age = time - a.drink.start;
+        const outward = ease(age / 2.6), backward = ease((age - 8.2) / 2.6);
+        approach = a.drink.distance * (outward - backward);
+        dip = ease((age - 2.6) / 1.2) * (1 - ease((age - 7) / 1.2));
+        activity = age < 2.6 ? 'approaching' : age < 3.8 ? 'lowering' : age < 7 ? 'drinking' : age < 8.2 ? 'raising' : 'returning';
+        if (age < 2.6 || age > 8.2) {
+          const phase = ((age < 2.6 ? age : age - 8.2) / 2.6 * 2) % 1;
+          stride = Math.sin(phase * Math.PI * 2); lift = Math.sin(phase * Math.PI) ** 2 * 2.5;
+        }
+        if (activity === 'drinking' && time >= a.nextSip) {
+          addWaterRipple(a.baseLeft + a.offset + drinkX + drinkWidth * .22, a.baseTop + approach + drinkY + drinkHeight * .925);
+          a.nextSip = time + .65;
+        }
+        if (age >= 10.8) { a.drink = null; approach = 0; dip = 0; a.nextDrink = time + 24; a.nextWalk = time + 5; activity = 'resting'; }
+      }
+      a.button.dataset.activity = activity;
+      a.button.style.transform = `translate(${a.offset.toFixed(2)}px, ${(approach - lift).toFixed(2)}px)`;
+      c.clearRect(-a.pad, 0, a.w + a.pad * 2, a.h);
+      c.globalAlpha = 1 - dip;
       // Upper bands breathe; paired lower bands articulate the legs during each step.
       // Overlap is subpixel-sized to avoid visible gaps between bands.
       const count = 96;
@@ -108,6 +180,9 @@
             ox + dx - dw * (stretch - 1) / 2, oy + dh * y, dw * stretch, sh * scale);
         }
       }
+      c.globalAlpha = dip;
+      if (dip > 0) c.drawImage(drinkingImage, drinkX, drinkY + Math.sin(time * 5) * dip * .45, drinkWidth, drinkHeight);
+      c.globalAlpha = 1;
       a.button.querySelector('.animal-shell').classList.add('ready');
     }
   }
@@ -165,6 +240,7 @@
       ctx.globalAlpha = 1;
     }
     ctx.globalCompositeOperation = 'source-over';
+    drawButterflies(time);
   }
   function tick(now) {
     frame = 0;
@@ -176,10 +252,16 @@
   }
   function sync() {
     cancelAnimationFrame(frame); frame = 0; previous = 0;
-    ripples.length = 0; pointer = null; lastWake = null;
+    ripples.length = 0; pointer = null; lastWake = null; butterflies.length = 0;
+    for (const flower of blooms.keys()) flower.classList.remove('is-blooming'); blooms.clear();
     if (reduced() || document.hidden) { ctx.clearRect(0, 0, width, height); drawAnimals(clock, true); }
     else frame = requestAnimationFrame(tick);
   }
+  stage.addEventListener('pointerover', e => {
+    const flower = e.target.closest('.grass');
+    if (e.pointerType === 'mouse' && flower && !flower.contains(e.relatedTarget)) bloomFlower(flower);
+  });
+  stage.addEventListener('click', e => bloomFlower(e.target.closest('.grass')));
   stage.addEventListener('pointermove', e => {
     if (reduced() || document.hidden) return;
     const b = stage.getBoundingClientRect(); pointer = { x: e.clientX - b.left, y: e.clientY - b.top };

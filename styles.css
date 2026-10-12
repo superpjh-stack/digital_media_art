@@ -26,3 +26,11 @@
 @media(max-width:1100px){.caption{display:none}.art-footer{justify-content:space-between}.help-panel{bottom:126px}}
 @media(max-width:768px){.art-footer{justify-content:center;gap:4px;padding:12px 12px 36px}.sound-controls{justify-content:center;width:100%;gap:7px}.controls{justify-content:center;width:100%}.sound-controls button{padding:0 12px}.music-volume input{width:65px}.voice-panel{right:16px;bottom:148px;max-height:calc(100% - 166px);padding:18px}.help-panel{bottom:148px}.hint{bottom:150px}.artist-credit{font-size:9px}.voice-heading h2{font-size:21px}}
 @media(max-height:560px) and (min-width:769px){.voice-panel{bottom:104px;max-height:calc(100% - 120px);padding:14px}.voice-transcript{min-height:35px;max-height:80px}.animal-choices{margin-top:12px}.voice-note{margin-top:9px}}
+
+/* Expanded transparent canvas keeps the lowered muzzle and antlers unclipped. */
+.deer .animal-motion{left:-35%;width:170%;max-width:none}
+.bloom-petals{position:absolute;left:51%;top:40%;width:0;height:0;pointer-events:none;opacity:0;transition:opacity 1.2s}
+.bloom-petals i{position:absolute;left:-6px;top:-20px;width:12px;height:22px;border-radius:70% 35% 65% 35%;background:radial-gradient(ellipse at 50% 85%,#ffe09a,#ff673bcc 48%,#c82e3544 90%);transform-origin:50% 100%;transform:rotate(calc(var(--petal)*45deg)) scale(.15);transition:transform 1.8s cubic-bezier(.2,.7,.3,1);box-shadow:0 0 8px #ff805044}
+.grass.is-blooming .bloom-petals{opacity:.95}
+.grass.is-blooming .bloom-petals i{transform:rotate(calc(var(--petal)*45deg)) scale(1)}
+.grass.is-blooming .blades{filter:brightness(1.15) drop-shadow(0 0 15px #ff9b4455)}

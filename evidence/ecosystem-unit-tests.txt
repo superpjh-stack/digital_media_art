@@ -1,0 +1,40 @@
+✔ start is idempotent; stop clears resources and can restart (1.180625ms)
+✔ ducking preserves chosen volume and never starts disabled music (0.195625ms)
+✔ cancelled async resume cannot restart scheduling (0.127375ms)
+✔ water is louder by the pond and birds by the trees; values stay bounded (0.412375ms)
+✔ ambient sources stop together and disposed engine cannot schedule birds (0.305ms)
+✔ serves only public assets, no secrets or repository files (24.761625ms)
+✔ missing key and invalid request do not contact upstream (0.933125ms)
+✔ server owns model, voice and instructions; only SDP returned (1.289125ms)
+✔ upstream failures are sanitized and timeout is bounded (11.555083ms)
+✔ concurrent call setup limit is enforced and released (0.50175ms)
+✔ deployment permits only configured HTTPS host and same-origin sessions (0.638125ms)
+✔ deer reacts once during 20 rapid clicks and resets after duration (2.178583ms)
+✔ all independent targets react and total particles never exceed 60 (0.611958ms)
+✔ reduced motion has static feedback and no particles (0.758875ms)
+✔ changing motion clears existing effects and explicit choice survives OS change (0.373459ms)
+✔ OS preference change is followed until overridden (0.276125ms)
+✔ resize and hidden tab clear all effects; hidden tab rejects activation (0.423208ms)
+✔ touch pointer entry does not trigger extra grass activation (0.298ms)
+✔ mouse entry activates grass and rabbit triggers adjacent grass (0.301917ms)
+✔ help closes with Escape and returns focus (0.297667ms)
+✔ unsupported and rejected fullscreen show feedback without breaking interaction (0.469542ms)
+✔ missing forest asset displays a message and leaves creatures functional (0.28625ms)
+✔ artist duration changes apply to state lifetime (0.288584ms)
+✔ missing key never requests a microphone (0.549458ms)
+✔ late microphone after cancel is stopped without creating a peer (1.640792ms)
+✔ late SDP after cancel cannot reconnect and tracks close (0.527834ms)
+✔ ready requires session and transport; mute and stop clean up (0.244084ms)
+✔ animal change closes previous session and ignores stale events (0.226792ms)
+✔ transcript, playback completion and failure have honest states (0.152833ms)
+✔ repeated start for same animal does not duplicate connections (0.067792ms)
+✔ connection timeout releases microphone (27.064208ms)
+✔ greeting identifies the chosen animal and duration cap closes the session (21.611541ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 84.34075

@@ -10,7 +10,7 @@ Node.js 24에서 프로젝트 폴더를 열고 실행합니다.
 node server.mjs
 ```
 
-브라우저에서 http://127.0.0.1:8766 을 엽니다. 배경음악은 **음악 켜기**를 누르면 시작합니다. 화면이 이전 버전이면 `Cmd+Shift+R`로 새로고침하세요.
+브라우저에서 http://127.0.0.1:8766 을 엽니다. 배경음악과 자연음은 **음악 켜기**를 누르면 함께 시작합니다. 물 가까이에서는 물소리가, 나무 가까이에서는 바람과 새소리가 커지며 좌우 위치도 달라집니다. **소리** 슬라이더로 전체 음량을 조절합니다. 화면이 이전 버전이면 `Cmd+Shift+R`로 새로고침하세요.
 
 ### 실제 음성 대화 설정
 
@@ -27,9 +27,9 @@ API 사용에는 계정의 사용 요금이 발생할 수 있습니다. 키는 �
 
 ## 감상과 조작
 
-- 사슴: 호흡과 고개 움직임에 더해 두 걸음씩 짧게 이동한 뒤 쉽니다. 클릭해도 걸음을 시작합니다.
+- 사슴: 호흡과 고개 움직임에 더해 두 걸음씩 짧게 이동한 뒤 쉽니다. 클릭하면 두 걸음 이동한 뒤 물가로 다가가 물을 마십니다. 입 아래에서 잔물결이 생기고 다시 돌아옵니다. 가만히 감상해도 주기적으로 물을 마십니다.
 - 토끼: 두 번 가볍게 뛰어 이동한 뒤 쉽니다. 클릭하면 가까운 꽃도 흔들립니다.
-- 붉은 꽃: 바람에 흔들립니다. 마우스를 올리거나 클릭하면 더 밝게 빛납니다.
+- 붉은 꽃: 마우스를 올리거나 클릭하면 꽃잎이 열리고 나비 두 마리가 찾아와 잠시 머문 뒤 날아갑니다.
 - 숲과 물: 안개·나뭇잎·반딧불이·수면 빛이 움직입니다. 아래쪽 물 위로 마우스를 움직이면 잔물결과 반사광이 출렁이고, 멈추면 서서히 가라앉습니다.
 - 키보드: `Tab`으로 동물·꽃·버튼 선택, `Enter` 또는 `Space`로 실행.
 - 움직임 줄이기: 모든 자동 움직임을 멈추고 정적인 테두리로 입력을 표시합니다. 운영체제 설정도 반영합니다.
@@ -64,6 +64,8 @@ API 사용에는 계정의 사용 요금이 발생할 수 있습니다. 키는 �
 - `server.mjs`: 서버 전용 API 키와 WebRTC 세션 생성
 - `voice-session.js`, `voice.js`: 음성 연결 수명 관리와 대화 UI
 - `music.js`: 배경음악 생성과 음량 조절
+- `nature-sound.js`: 위치에 따른 물·바람·새소리 합성과 좌우 음향
+- `assets/moon-deer-drinking.png`: 투명 배경의 물 마시는 사슴 자세
 - `assets/night-forest.png`: 밤숲 배경
 - `assets/moon-deer.png`, `assets/moon-rabbit.png`: 투명 동물 이미지
 - `assets/ember-flowers.png`: 투명 꽃 이미지
@@ -74,8 +76,9 @@ API 사용에는 계정의 사용 요금이 발생할 수 있습니다. 키는 �
 ## 개발용 검사
 
 ```sh
-node --test tests/state.test.cjs tests/voice.test.cjs tests/music.test.cjs tests/server.test.mjs
+node --test tests/state.test.cjs tests/voice.test.cjs tests/music.test.cjs tests/server.test.mjs tests/nature-sound.test.cjs
 node tools/audio-browser-check.cjs
+FOREST_TEST_URL=http://127.0.0.1:8766/ node tools/ecosystem-browser-check.cjs
 ```
 
 브라우저 검사는 macOS Google Chrome과 실행 중인 Node 서버(8766)를 사용합니다. 음성 전송은 모의 연결이며 실제 API 성공 증거와 구분합니다. 최신 검사 결과는 `evidence/audio-unit-tests.txt`, `evidence/audio-browser-checks.json`에 있습니다.

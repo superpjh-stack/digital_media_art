@@ -25,6 +25,7 @@
         await c.resume();
         if(generation!==this.generation)return false;
         if(c.state!=='running')throw new Error('playback blocked');
+        this.ambience=global.ForestAmbience?new global.ForestAmbience(c,this.master):null;
         this.playing=true;this.nextChord=c.currentTime+.04;this.nextBell=c.currentTime+3;this.chordIndex=0;this.bellIndex=0;
         this.schedule();this.timer=setInterval(()=>this.schedule(),250);this.onChange(true);return true;
       }catch(error){if(generation===this.generation){this.stop();throw error;}return false;}
@@ -39,6 +40,7 @@
     }
     schedule(){
       if(!this.playing||!this.context)return;
+      this.ambience?.schedule();
       const now=this.context.currentTime;
       const chords=[[48,55,59,64],[45,52,55,60],[41,48,52,57],[43,50,57,62]];
       if(this.nextChord<now+.5){const notes=chords[this.chordIndex++%chords.length];for(const [i,note]of notes.entries())this.tone(note,this.nextChord+i*.13,10,.038);this.tone(notes[0]-12,this.nextChord,10,.023);this.nextChord+=8;}
@@ -47,6 +49,7 @@
     stop(){
       this.generation++;clearInterval(this.timer);this.timer=null;this.playing=false;
       for(const node of this.nodes){try{node.stop();node.disconnect();}catch{}}this.nodes.clear();
+      this.ambience?.stop();this.ambience=null;
       const c=this.context;this.context=null;this.master=null;this.bus=null;
       if(c)c.close().catch(()=>{});this.onChange(false);
     }
@@ -57,7 +60,7 @@
     const toggle=document.querySelector('#music-toggle'),volume=document.querySelector('#music-volume');
     if(!toggle)return;
     const status=document.querySelector('#music-status');
-    const music=new ForestMusic({onChange:playing=>{toggle.setAttribute('aria-pressed',String(playing));toggle.textContent=playing?'음악 끄기':'음악 켜기';status.textContent=playing?'달빛 앰비언트 재생 중':'음악 꺼짐';}});
+    const music=new ForestMusic({onChange:playing=>{toggle.setAttribute('aria-pressed',String(playing));toggle.textContent=playing?'음악 끄기':'음악 켜기';status.textContent=playing?'음악과 공간 자연음 재생 중':'음악 꺼짐';}});
     global.forestMusic=music;
     toggle.addEventListener('click',async()=>{
       if(music.context){music.stop();return;}

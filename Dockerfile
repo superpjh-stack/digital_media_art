@@ -1,7 +1,7 @@
 FROM node:24-alpine
 WORKDIR /app
 ENV NODE_ENV=production HOST=0.0.0.0 PORT=8766
-COPY --chown=node:node server.mjs index.html styles.css script.js night.js voice-session.js voice.js music.js ./
+COPY --chown=node:node server.mjs index.html styles.css script.js night.js voice-session.js voice.js music.js nature-sound.js ./
 COPY --chown=node:node assets/ ./assets/
 USER node
 EXPOSE 8766

@@ -7,10 +7,11 @@
   <meta name="description" content="작은 손짓으로 사슴과 토끼, 꽃을 깨우는 인터랙티브 숲. 손끝에 깨어나는 숲.">
   <title>손끝에 깨어나는 숲</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="styles.css?v=steps-1">
+  <link rel="stylesheet" href="styles.css?v=ecosystem-1">
   <script src="script.js?v=night-1" defer></script>
-  <script src="night.js?v=steps-1" defer></script>
-  <script src="music.js?v=voice-1" defer></script>
+  <script src="night.js?v=ecosystem-1" defer></script>
+  <script src="nature-sound.js?v=ecosystem-1" defer></script>
+  <script src="music.js?v=ecosystem-1" defer></script>
   <script src="voice-session.js?v=voice-1" defer></script>
   <script src="voice.js?v=voice-1" defer></script>
 </head>
@@ -49,7 +50,7 @@
         <div class="sound-controls" aria-label="소리 설정">
           <button id="voice-toggle" type="button" aria-expanded="false" aria-controls="voice-panel">동물과 대화</button>
           <button id="music-toggle" type="button" aria-pressed="false">음악 켜기</button>
-          <label class="music-volume">음악 <input id="music-volume" type="range" min="0" max="100" value="35" aria-label="배경음악 볼륨"></label>
+          <label class="music-volume">소리 <input id="music-volume" type="range" min="0" max="100" value="35" aria-label="배경음악과 자연음 볼륨"></label>
           <span id="music-status" class="sr-only" role="status">음악 꺼짐</span>
         </div>
         <div class="controls" aria-label="감상 설정">
@@ -79,7 +80,7 @@
         <div class="help-heading"><h2>숲과 인사하는 방법</h2><button id="help-close" aria-label="도움말 닫기">닫기</button></div>
         <p>사슴과 토끼를 클릭하거나, 꽃 위로 포인터를 움직여 보세요. 터치 화면에서는 손가락으로 가볍게 눌러 주세요.</p>
         <p><kbd>Tab</kbd>으로 이동하고 <kbd>Enter</kbd> 또는 <kbd>Space</kbd>로 인사할 수도 있어요.</p>
-        <p class="help-note">일반 노트북은 트랙패드나 마우스로 조작합니다. 전체 화면은 <kbd>Esc</kbd>로 나옵니다. 음악은 ‘음악 켜기’로 시작합니다. ‘동물과 대화’에서 마이크로 이야기할 수 있어요.</p>
+        <p class="help-note">일반 노트북은 트랙패드나 마우스로 조작합니다. 전체 화면은 <kbd>Esc</kbd>로 나옵니다. 음악과 자연음은 ‘음악 켜기’로 시작합니다. 물 가까이에서는 물소리가, 나무 가까이에서는 바람과 새소리가 커집니다. 사슴은 물을 마시고, 꽃을 건드리면 나비가 찾아옵니다. ‘동물과 대화’에서 마이크로 이야기할 수 있어요.</p>
       </aside>
     </section>
     <p class="status sr-only" role="status" id="status" aria-live="polite"></p>

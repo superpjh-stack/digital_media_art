@@ -17,3 +17,9 @@ A single photorealistic small wild rabbit isolated cutout on transparent backgro
 ## ember-flowers.png
 
 A botanical photorealistic cutout of three beautiful luminous red poppy flowers growing on slender curved dark green stems with a few delicately serrated leaves. One large open scarlet poppy at upper center with translucent vermilion petals and glowing warm golden heart, one smaller orange red flower at lower left, one closed bud on right. Real fine petal texture and natural asymmetrical curled edges, nighttime cinematic lighting, bioluminescent warm internal glow, cool blue highlights on leaves. Entire stems visible down to bottom, full plant cluster centered, portrait aspect ratio, isolated on genuinely transparent background. No pot, no ground, no scenery, no text, no border. Production compositing foreground asset for an immersive nocturnal woodland.
+
+## 2026-10-13 Drinking deer
+
+- File: `assets/moon-deer-drinking.png` (1536 × 1024, transparent PNG).
+- Built-in image_gen edit, with `assets/moon-deer.png` as the reference; no CLI/API key used. Browser pixel check confirms transparent corner alpha.
+- Prompt: Create a matching animation pose asset for the attached deer used in a photorealistic moonlit forest web artwork. Edit the reference deer to be drinking: SAME spotted fallow stag, matching antlers, fur, scale and cool moonlight, left-facing three-quarter side view. Lower and extend its neck naturally down toward the LEFT, muzzle touching the ground/water level, legs remain standing, front legs slightly spread. Full body and antlers fully visible with generous transparent margins. True transparent background, no water or ground, no glow haze, no shadow rectangle, no text. Pose should fit a landscape 3:2 canvas. Match existing deer's realistic photographic rendering, do not cartoonize. Output a single drinking pose only.

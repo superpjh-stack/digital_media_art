@@ -20,6 +20,7 @@ test('serves only public assets, no secrets or repository files', async()=>{
  assert.match((await request(app,'/')).body,/손끝/);
  for(const path of ['/.env','/server.mjs','/.git/config','/README.md','/assets/../.env','/%2e%2e/.env','/assets/GENERATED-ASSETS.md']) assert.equal((await request(app,path)).statusCode,404,path);
  assert.equal((await request(app,'/styles.css?v=1')).statusCode,200);
+ for(const asset of ['/nature-sound.js','/assets/moon-deer-drinking.png'])assert.equal((await request(app,asset)).statusCode,200);
  assert.equal((await request(app,'/',{host:'evil.example'})).statusCode,403);
  const config=await request(app,'/api/config');assert.deepEqual(JSON.parse(config.body),{voiceAvailable:true});assert.ok(!config.body.includes('secret-test'));
 });
