@@ -33,7 +33,7 @@ const screenshot=async name=>{const shot=await send('Page.captureScreenshot');fs
  window.mockAudio=new AudioContext();const out=mockAudio.createMediaStreamDestination();const osc=mockAudio.createOscillator();const gain=mockAudio.createGain();gain.gain.value=.08;osc.connect(gain);gain.connect(out);osc.start();mockAudio.resume();window.mockStream=out.stream;
  class Channel extends EventTarget{constructor(){super();this.readyState='open';this.sent=[];}send(s){this.sent.push(JSON.parse(s));}close(){this.readyState='closed';}message(data){this.dispatchEvent(new MessageEvent('message',{data:JSON.stringify(data)}));}}
  class Peer extends EventTarget{constructor(){super();this.connectionState='new';this.channel=new Channel();}createDataChannel(){return this.channel;}addTrack(){}async createOffer(){return {type:'offer',sdp:'v=0\\r\\nm=audio 9'};}async setLocalDescription(){}async setRemoteDescription(){this.connectionState='connected';this.dispatchEvent(new Event('connectionstatechange'));this.channel.message({type:'session.created'});const e=new Event('track');e.streams=[mockStream];this.dispatchEvent(e);}close(){this.connectionState='closed';}}
- forestVoice.fetchImpl=async url=>({ok:true,json:async()=>url==='/api/config'?{voiceAvailable:true}:{sdp:'v=0\\r\\n'}});
+ forestVoice.fetchImpl=async url=>({ok:true,json:async()=>url==='api/config'?{voiceAvailable:true}:{sdp:'v=0\\r\\n'}});
  forestVoice.getUserMedia=async()=>{window.mockMic=mockStream.clone();return mockMic;};forestVoice.createPeer=()=>new Peer();
  })()`);
  await click('#voice-toggle');await click('#voice-start');await sleep(500);

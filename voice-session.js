@@ -61,7 +61,7 @@
       this.current=call;this.update({phase:'connecting',animal,muted:false,error:''});this.onTranscript('');
       call.timer=setTimeout(()=>this.fail(call,'연결 시간이 초과됐어요. 마이크 권한과 인터넷 연결을 확인해 주세요.'),this.connectionTimeoutMs);
       try {
-        const configResponse=await this.fetchImpl('/api/config',{signal:call.abort.signal});
+        const configResponse=await this.fetchImpl('api/config',{signal:call.abort.signal});
         if(!this.isCurrent(call))return false;
         if(!configResponse.ok)throw new Error('local-server');
         const config=await configResponse.json();
@@ -86,7 +86,7 @@
         channel.addEventListener('message',message=>{try{this.receive(call,JSON.parse(message.data));}catch{/* Ignore malformed/non-JSON transport data. */}});
         const offer=await peer.createOffer();if(!this.isCurrent(call))return false;
         await peer.setLocalDescription(offer);if(!this.isCurrent(call))return false;
-        const response=await this.fetchImpl('/api/session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({animal,sdp:offer.sdp}),signal:call.abort.signal});
+        const response=await this.fetchImpl('api/session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({animal,sdp:offer.sdp}),signal:call.abort.signal});
         if(!this.isCurrent(call))return false;
         const result=await response.json();if(!this.isCurrent(call))return false;
         if(!response.ok){this.fail(call,result.error||'음성 연결에 실패했어요. 다시 시작해 주세요.');return false;}
