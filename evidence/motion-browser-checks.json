@@ -1,0 +1,38 @@
+[
+  {
+    "name": "both animals take steps",
+    "result": true
+  },
+  {
+    "name": "animals rest at their new positions",
+    "result": true
+  },
+  {
+    "name": "next two steps return deer without drifting",
+    "result": true
+  },
+  {
+    "name": "hover water generates rings without click",
+    "result": true
+  },
+  {
+    "name": "water settles after pointer leaves",
+    "result": true
+  },
+  {
+    "name": "reduced motion stops steps and ripples",
+    "result": true
+  },
+  {
+    "name": "walking animals remain in bounds 390",
+    "result": true
+  },
+  {
+    "name": "walking animals remain in bounds 1280",
+    "result": true
+  },
+  {
+    "name": "runtime errors",
+    "result": []
+  }
+]

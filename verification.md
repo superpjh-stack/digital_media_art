@@ -136,3 +136,10 @@
 - API 경로를 상대 주소로 변경해 /forest/ 하위 배포를 지원합니다. 자동 검사 30개 통과.
 - VPS .env에는 PUBLIC_ORIGIN만 설정했습니다. 음성 API 키는 미설정이며 실제 AI 음성 왕복은 미검증입니다.
 - 갱신: VPS 프로젝트 폴더에서 git pull --ff-only 후 docker compose -p digital-media-art -f docker-compose.yml -f compose.hostinger.yml up -d --build.
+
+## 2026-10-13 — 동물 두 걸음과 물 위 마우스 반응
+
+- 동물이 두 걸음 이동 후 쉬고 다음 이동에서는 원래 위치로 돌아옵니다. 클릭으로도 시작하며, 사슴 다리의 미세한 교차 움직임과 토끼의 두 번 도약을 결합했습니다.
+- 수면(화면 아래 79% 이후)에 포인터가 들어오거나 이동하면 최대 16개 파문과 반사광 변위를 생성합니다. 2.4초 후 파문 소멸. 움직임 감소/탭 숨김에서 정지합니다.
+- Node 30개 통과, Chrome 동작 검사 8개 통과/런타임 예외 0. PC/390px 모바일 화면 확인. 근거: evidence/motion-browser-checks.json, motion-*.png.
+- 실제 3D 보행이 아닌 기존 2D 이미지의 이동·부분 변형입니다.
