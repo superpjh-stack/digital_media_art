@@ -1,0 +1,20 @@
+✔ deer reacts once during 20 rapid clicks and resets after duration (2.5675ms)
+✔ all independent targets react and total particles never exceed 60 (0.461958ms)
+✔ reduced motion has static feedback and no particles (0.536333ms)
+✔ changing motion clears existing effects and explicit choice survives OS change (0.315875ms)
+✔ OS preference change is followed until overridden (0.23475ms)
+✔ resize and hidden tab clear all effects; hidden tab rejects activation (0.362542ms)
+✔ touch pointer entry does not trigger extra grass activation (0.2555ms)
+✔ mouse entry activates grass and rabbit triggers adjacent grass (0.265ms)
+✔ help closes with Escape and returns focus (0.266292ms)
+✔ unsupported and rejected fullscreen show feedback without breaking interaction (0.803417ms)
+✔ missing forest asset displays a message and leaves creatures functional (0.329709ms)
+✔ artist duration changes apply to state lifetime (0.296208ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 40.489959

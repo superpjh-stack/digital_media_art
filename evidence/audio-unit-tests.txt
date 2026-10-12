@@ -1,0 +1,37 @@
+✔ start is idempotent; stop clears resources and can restart (1.162208ms)
+✔ ducking preserves chosen volume and never starts disabled music (0.217667ms)
+✔ cancelled async resume cannot restart scheduling (0.120375ms)
+✔ serves only public assets, no secrets or repository files (2.677916ms)
+✔ missing key and invalid request do not contact upstream (0.913792ms)
+✔ server owns model, voice and instructions; only SDP returned (1.254792ms)
+✔ upstream failures are sanitized and timeout is bounded (11.632583ms)
+✔ concurrent call setup limit is enforced and released (0.475375ms)
+✔ deer reacts once during 20 rapid clicks and resets after duration (1.895625ms)
+✔ all independent targets react and total particles never exceed 60 (0.65925ms)
+✔ reduced motion has static feedback and no particles (0.955292ms)
+✔ changing motion clears existing effects and explicit choice survives OS change (0.599625ms)
+✔ OS preference change is followed until overridden (0.44875ms)
+✔ resize and hidden tab clear all effects; hidden tab rejects activation (0.453167ms)
+✔ touch pointer entry does not trigger extra grass activation (0.325416ms)
+✔ mouse entry activates grass and rabbit triggers adjacent grass (0.327708ms)
+✔ help closes with Escape and returns focus (0.318083ms)
+✔ unsupported and rejected fullscreen show feedback without breaking interaction (0.528917ms)
+✔ missing forest asset displays a message and leaves creatures functional (0.310917ms)
+✔ artist duration changes apply to state lifetime (0.287375ms)
+✔ missing key never requests a microphone (0.537791ms)
+✔ late microphone after cancel is stopped without creating a peer (1.557084ms)
+✔ late SDP after cancel cannot reconnect and tracks close (0.592625ms)
+✔ ready requires session and transport; mute and stop clean up (0.243208ms)
+✔ animal change closes previous session and ignores stale events (0.198292ms)
+✔ transcript, playback completion and failure have honest states (0.152125ms)
+✔ repeated start for same animal does not duplicate connections (0.069209ms)
+✔ connection timeout releases microphone (25.138166ms)
+✔ greeting identifies the chosen animal and duration cap closes the session (21.513291ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 81.981959

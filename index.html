@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#030c12">
+  <meta name="description" content="작은 손짓으로 사슴과 토끼, 꽃을 깨우는 인터랙티브 숲. 손끝에 깨어나는 숲.">
+  <title>손끝에 깨어나는 숲</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="styles.css?v=voice-1">
+  <script src="script.js?v=night-1" defer></script>
+  <script src="night.js?v=voice-1" defer></script>
+  <script src="music.js?v=voice-1" defer></script>
+  <script src="voice-session.js?v=voice-1" defer></script>
+  <script src="voice.js?v=voice-1" defer></script>
+</head>
+<body>
+  <main id="artwork">
+    <header class="titlebar">
+      <div class="identity"><p class="eyebrow">NOCTURNE / INTERACTIVE FOREST</p><h1>손끝에 깨어나는 숲</h1></div>
+      <p class="intro">달빛이 머무는 곳,<br>당신의 손끝에서 숲이 깨어납니다.</p>
+    </header>
+    <section class="frame" aria-label="달빛과 빛나는 꽃 사이에 동물이 머무는 밤숲">
+      <div class="stage" id="stage">
+        <img class="forest" src="assets/night-forest.png" alt="달빛 아래 오래된 나무, 붉게 빛나는 꽃과 청록빛 시냇물이 흐르는 밤숲" draggable="false">
+        <div class="canopy" aria-hidden="true"></div>
+        <div class="atmosphere" aria-hidden="true"></div>
+        <div class="mist mist-far" aria-hidden="true"></div>
+        <div class="mist mist-near" aria-hidden="true"></div>
+        <canvas id="living-light" aria-hidden="true"></canvas>
+        <div class="sun-dust" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <button class="creature deer" data-kind="deer" data-state="idle" aria-label="사슴 깨우기" aria-describedby="interaction-hint">
+          <span class="halo" aria-hidden="true"></span>
+          <span class="animal-shell"><img class="animal deer-art" src="assets/moon-deer.png" alt="" draggable="false"><canvas class="animal-motion" aria-hidden="true"></canvas></span>
+          <span class="creature-label">사슴 <span>· 살며시 깨워 보세요</span></span>
+        </button>
+        <button class="creature rabbit" data-kind="rabbit" data-state="idle" aria-label="토끼 깨우기" aria-describedby="interaction-hint">
+          <span class="halo" aria-hidden="true"></span>
+          <span class="animal-shell rabbit-jump"><img class="animal rabbit-art" src="assets/moon-rabbit.png" alt="" draggable="false"><canvas class="animal-motion" aria-hidden="true"></canvas></span>
+          <span class="creature-label">토끼 <span>· 작은 인사를 건네세요</span></span>
+        </button>
+        <div class="grasses" id="grasses"></div>
+        <div class="particles" id="particles" aria-hidden="true"></div>
+        <p id="interaction-hint" class="hint">사슴과 꽃을 살며시 눌러 보세요.</p>
+        <p class="asset-warning" id="asset-warning" hidden>숲 그림을 불러오지 못했어요. assets 폴더를 확인해 주세요.</p>
+      </div>
+      <footer class="art-footer">
+        <p class="caption"><span class="small-leaf" aria-hidden="true">✧</span> 달빛 아래, 살아 있는 숲</p>
+        <div class="sound-controls" aria-label="소리 설정">
+          <button id="voice-toggle" type="button" aria-expanded="false" aria-controls="voice-panel">동물과 대화</button>
+          <button id="music-toggle" type="button" aria-pressed="false">음악 켜기</button>
+          <label class="music-volume">음악 <input id="music-volume" type="range" min="0" max="100" value="35" aria-label="배경음악 볼륨"></label>
+          <span id="music-status" class="sr-only" role="status">음악 꺼짐</span>
+        </div>
+        <div class="controls" aria-label="감상 설정">
+          <button id="motion-toggle" type="button" aria-pressed="false">움직임 줄이기</button>
+          <button id="help-toggle" type="button" aria-expanded="false" aria-controls="help-panel">도움말</button>
+          <button id="fullscreen" type="button">전체 화면 <span aria-hidden="true">↗</span></button>
+        </div>
+        <p class="artist-credit">made by Gerardo <span>2026.10.12</span></p>
+      </footer>
+      <aside id="voice-panel" class="voice-panel" role="dialog" aria-labelledby="voice-title" hidden>
+        <div class="voice-heading"><div><p class="voice-eyebrow">숲속의 작은 대화 · AI 음성</p><h2 id="voice-title">사슴과 이야기</h2></div><button id="voice-close" type="button" aria-label="대화 창 닫기">닫기</button></div>
+        <div class="animal-choices" aria-label="대화 상대">
+          <button type="button" data-voice-animal="deer" aria-pressed="true">차분한 사슴</button>
+          <button type="button" data-voice-animal="rabbit" aria-pressed="false">호기심 많은 토끼</button>
+        </div>
+        <p id="voice-status" class="voice-status" role="status">대화할 준비가 되었어요</p>
+        <p id="voice-transcript" class="voice-transcript" aria-label="동물의 답변 자막">동물이 답하면 여기에 자막이 나타납니다.</p>
+        <div class="voice-actions">
+          <button id="voice-start" type="button">대화 시작</button>
+          <button id="voice-mute" type="button" aria-pressed="false" disabled>마이크 끄기</button>
+          <button id="voice-stop" type="button" disabled>종료</button>
+        </div>
+        <button id="voice-play" type="button" hidden>답변 소리 재생하기</button>
+        <p class="voice-note">시작하면 마이크 음성이 AI 서비스로 전달됩니다. 대화는 최대 10분이며 화면을 떠나면 종료됩니다.</p>
+      </aside>
+      <aside id="help-panel" class="help-panel" aria-label="작품 감상 방법" hidden>
+        <div class="help-heading"><h2>숲과 인사하는 방법</h2><button id="help-close" aria-label="도움말 닫기">닫기</button></div>
+        <p>사슴과 토끼를 클릭하거나, 꽃 위로 포인터를 움직여 보세요. 터치 화면에서는 손가락으로 가볍게 눌러 주세요.</p>
+        <p><kbd>Tab</kbd>으로 이동하고 <kbd>Enter</kbd> 또는 <kbd>Space</kbd>로 인사할 수도 있어요.</p>
+        <p class="help-note">일반 노트북은 트랙패드나 마우스로 조작합니다. 전체 화면은 <kbd>Esc</kbd>로 나옵니다. 음악은 ‘음악 켜기’로 시작합니다. ‘동물과 대화’에서 마이크로 이야기할 수 있어요.</p>
+      </aside>
+    </section>
+    <p class="status sr-only" role="status" id="status" aria-live="polite"></p>
+    <p class="toast" id="toast" role="status" hidden></p>
+    <noscript><p class="noscript">숲과 교감하려면 브라우저의 JavaScript를 켜 주세요. 그림은 그대로 감상할 수 있습니다.</p></noscript>
+  </main>
+</body>
+</html>
